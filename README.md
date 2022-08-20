@@ -5,5 +5,5 @@ Web-API for [SocialLib](https://lib.social) website to read manga in russian
 ```python
 import social_lib
 social_lib = social_lib.SocialLib()
-social_lib.login(email="", password="")
+social_lib.login_with_web_token(web_token="")
 ```
