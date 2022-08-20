@@ -4,7 +4,8 @@ class SocialLib:
 	def __init__(self):
 		self.api = "https://lib.social"
 		self.headers = {
-			"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
+			"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"
+		}
 		self.csrf_token = self.get_csrf_token()["csrf"]
 
 	def get_csrf_token(self):
@@ -18,24 +19,12 @@ class SocialLib:
 			f"{self.api}/upload/image",
 			files=data,
 			headers=self.headers).json()
-
-	def login(
-			self,
-			email: str,
-			password: str,
-			remember: str = "on"):
-		data = {
-			"_token": self.csrf_token,
-			"from": "https://accounts.youtube.com/",
-			"email": email,
-			"password": password,
-			"remember": remember
-		}
-		return requests.post(
-			f"{self.api}/login",
-			data=data,
-			headers=self.headers).json()
-
+	
+	def login_with_web_token(self, remember_web: str):
+		self.remember_web = remember_web
+		self.headers["cookie"] = self.remember_web
+		return remember_web
+		
 	def reset_password(
 			self,
 			email: str,
@@ -286,3 +275,4 @@ class SocialLib:
 			f"{self.api}/api/forum/discussion",
 			data=data,
 			headers=self.headers).json()
+			
