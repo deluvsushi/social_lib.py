@@ -1,26 +1,32 @@
 import requests
 
 class SocialLib:
-	def __init__(self):
+	def __init__(self) -> None:
 		self.api = "https://lib.social"
 		self.headers = {
 			"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"
 		}
 		self.csrf_token = self.get_csrf_token()["csrf"]
 
-	def get_csrf_token(self):
+	def get_csrf_token(self) -> dict:
 		return requests.get(
 			f"{self.api}/_refresh-token",
 			headers=self.headers).json()
 
-	def upload_image(self, file: bytes):
-		data = {"file": ("image.jpg", file, "image/jpeg")}
+	def upload_image(self, file: bytes) -> dict:
+		data = {
+			"file": (
+				"image.jpg",
+				file,
+				"image/jpeg"
+			)
+		}
 		return requests.post(
 			f"{self.api}/upload/image",
 			files=data,
 			headers=self.headers).json()
 	
-	def login_with_web_token(self, remember_web: str):
+	def login_with_web_token(self, remember_web: str) -> str:
 		self.remember_web = remember_web
 		self.headers["cookie"] = self.remember_web
 		return remember_web
@@ -29,7 +35,7 @@ class SocialLib:
 			self,
 			email: str,
 			password: str,
-			token: str):
+			token: str) -> dict:
 		data = {
 			"_token": self.csrf_token,
 			"token": token,
@@ -42,12 +48,12 @@ class SocialLib:
 			data=data,
 			headers=self.headers).json()
 
-	def chat_auth(self, auth: bool = True):
+	def chat_auth(self, auth: bool = True) -> dict:
 		return requests.get(
 			"{self.api}/chat?auth={auth}",
 			headers=self.headers).json()
 
-	def get_chat_message(self, message_id: int):
+	def get_chat_message(self, message_id: int) -> dict:
 		return requests.get(
 			"{self.api}/message?id={message_id}",
 			headers=self.headers).json()
@@ -55,7 +61,7 @@ class SocialLib:
 	def change_password(
 			self,
 			old_password: str,
-			new_password: str):
+			new_password: str) -> dict:
 		data = {
 			"_token": self.csrf_token,
 			"old_password": old_password,
@@ -72,25 +78,29 @@ class SocialLib:
 			page: int = 1,
 			type: str = "all",
 			ajax: bool = True,
-			get_counts: bool = True):
+			get_counts: bool = True) -> dict:
 		return requests.get(
 			f"{self.api}notification?page={page}&type={type}&ajax={ajax}&getCounts={get_counts}",
 			headers=self.headers).json()
 
-	def get_user_bookmark(self, user_id: int):
+	def get_user_bookmark(self, user_id: int) -> dict:
 		return requests.get(
 			f"{self.api}/bookmark/{user_id}",
 			headers=self.headers).json()
 
-	def follow_user(self, user_id: int):
-		data = {"follower_id": user_id}
+	def follow_user(self, user_id: int) -> dict:
+		data = {
+			"follower_id": user_id
+		}
 		return requests.post(
 			f"{self.api}/follow",
 			data=data,
 			headers=self.headers).json()
 
-	def block_user(self, user_id: int):
-		data = {"block_id": user_id}
+	def block_user(self, user_id: int) -> dict:
+		data = {
+			"block_id": user_id
+		}
 		return requests.post(
 			f"{self.api}/block",
 			data=data,
@@ -101,7 +111,7 @@ class SocialLib:
 			category: str = "all",
 			subscription: int = 0,
 			page: int = 1,
-			sort: str = "newest"):
+			sort: str = "newest") -> dict:
 		return requests.get(
 			f"{self.api}/api/forum/discussion?category={category}&subscription={subscription}&page={page}&sort={sort}",
 			headers=self.headers).json()
@@ -112,7 +122,7 @@ class SocialLib:
 			category: str = "all",
 			subscription: int = 0,
 			page: int = 1,
-			sort: str = "newest"):
+			sort: str = "newest") -> dict:
 		return requests.get(
 			f"{self.api}/api/forum/discussion?category={category}&title={title}&subscription={subscription}&page={page}&sort={sort}",
 			headers=self.headers).json()
@@ -122,7 +132,7 @@ class SocialLib:
 			user_id: int,
 			subscription: int = 0,
 			page: int = 1,
-			sort: str = "newest"):
+			sort: str = "newest") -> dict:
 		return requests.get(
 			f"{self.api}/api/forum/discussion?user_id={user_id}&subscription={subscription}&page={page}&sort={sort}",
 			headers=self.headers).json()
@@ -130,17 +140,17 @@ class SocialLib:
 	def get_subscriptions(
 			self,
 			page: int = 1,
-			sort: str = "newest"):
+			sort: str = "newest") -> dict:
 		return requests.get(
 			f"{self.api}/api/forum/discussion?subscription=1&page={page}&sort={sort}",
 			headers=self.headers).json()
 
-	def follow_discussion(self, discussion_id: int):
+	def follow_discussion(self, discussion_id: int) -> dict:
 		return requests.post(
 			f"{self.api}/api/forum/discussion/{discussion_id}/notification",
 			headers=self.headers).json()
 
-	def comment_discussion(self, discussion_id: int, text: str):
+	def comment_discussion(self, discussion_id: int, text: str) -> dict:
 		data = {
 			"body": {
 				"ops": [
@@ -156,24 +166,24 @@ class SocialLib:
 			data=data,
 			headers=self.headers).json()
 
-	def check_chat_online(self, users: list):
+	def check_chat_online(self, users: list) -> dict:
 		data = {"users": users}
 		return requests.post(
 			f"{self.api}/chat/check-online",
 			data=data,
 			headers=self.headers).json()
 
-	def search_user(self, query: str):
+	def search_user(self, query: str) -> dict:
 		return requests.get(
 			f"{self.api}/search?type=user&q={query}",
 			headers=self.headers).json()
 
-	def get_updates(self, page: int = 1):
+	def get_updates(self, page: int = 1) -> dict:
 		return requests.get(
 			f"{self.api}/user/updates?page={page}",
 			headers=self.headers).json()
 
-	def send_message(self, text: str, before: int):
+	def send_message(self, text: str, before: int) -> dict:
 		data = {
 			"text": text,
 			"before": before
@@ -188,7 +198,7 @@ class SocialLib:
 			username: str = None,
 			email: str = None,
 			gender: int = 0,
-			about: str = None):
+			about: str = None) -> dict:
 		data = {
 			"_token": self.csrf_token,
 			"gender": gender
@@ -204,7 +214,10 @@ class SocialLib:
 			data=data,
 			headers=self.headers).json()
 
-	def edit_comment(self, comment_id: int, text: str):
+	def edit_comment(
+			self,
+			comment_id: int,
+			text: str) -> dict:
 		data = {
 			"body": {
 				"ops": [
@@ -219,23 +232,28 @@ class SocialLib:
 			data=data,
 			headers=self.headers).json()
 
-	def delete_comment(self, discussion_id: int, post_ids: list):
+	def delete_comment(
+			self,
+			discussion_id: int,
+			post_ids: list) -> dict:
 		data = {
 			"postIds": post_ids,
 			"chatter_discussion_id": discussion_id
-			}
+		}
 		return requests.delete(
 			f"{self.api}/api/forum/posts",
 			data=data,
 			headers=self.headers).json()
 
-	def get_discussion(self, discussion_id: int):
+	def get_discussion(self, discussion_id: int) -> dict:
 		return requests.get(
 			f"{self.api}/api/forum/discussion/{discussion_id}",
 			headers=self.headers).json()
 
-	def lock_discussion(self, discussion_id: int):
-		data = {"actionType": "locked"}
+	def lock_discussion(self, discussion_id: int) -> dict:
+		data = {
+			"actionType": "locked"
+		}
 		return requests.post(
 			f"{self.api}/api/forum/discussion/{discussion_id}/action",
 			data=data,
@@ -247,7 +265,7 @@ class SocialLib:
 			description: str, 
 			category_id: int,
 			yaoi: bool = False,
-			image: str = None):
+			image: str = None) -> dict:
 		data = {
 			"title": title,
 			"body": {
